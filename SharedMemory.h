@@ -26,13 +26,13 @@ public:
       exit(-1);
     }
 
-    const int status = ftruncate(fd, static_cast<off_t>(1024));
+    const int status = ftruncate(fd, static_cast<off_t>(10240));
     if(status != 0) {
       std::cout << "ftrucate error" << std::endl;
       exit(-1);
     }
 
-    shmBlock::startPtr = (char *) mmap(0, 1024, PROT_WRITE, MAP_SHARED, fd, 0);
+    shmBlock::startPtr = (char *) mmap(0, 10240, PROT_WRITE, MAP_SHARED, fd, 0);
     if(shmBlock::startPtr == MAP_FAILED)
     {
       std::cout << "mmap failed" << std::endl;
@@ -67,11 +67,8 @@ public:
   }
 
 
-  // ???
   static void setShmStartPtr()
   {
-    // when reading to memory we have to check offset between startPtr and OLD startPtr
-    // ???
     char * old = nullptr;
     memcpy(&old, shmBlock::startPtr, sizeof(char *));
 
@@ -82,7 +79,9 @@ public:
 
     std::cout << "offset = " << offset << std::endl;
 
-    shmBlock::startPtr += offset;
+    // ???
+    // shmBlock::startPtr += offset;
+
     shmBlock::lastUsed = shmBlock::startPtr + sizeof(shmBlock::startPtr);
 
     std::cout << (void *) shmBlock::startPtr << std::endl;
@@ -91,7 +90,7 @@ public:
 
   static void freeShm()
   {
-    if(munmap(shmBlock::startPtr, static_cast<off_t>(1024))) 
+    if(munmap(shmBlock::startPtr, static_cast<off_t>(10240))) 
     {
       std::cout << "unmap error" << std::endl;
       exit(-1);
@@ -117,7 +116,7 @@ public:
   shmPtr<T>(T * ptr)
   {
     makeNew();
-    memcpy(m_data, ptr, sizeof(T*));
+    memcpy(m_data, ptr, sizeof(T)); // czy aby na pewno??
   }
 
   void operator=(std::nullptr_t)

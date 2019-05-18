@@ -34,7 +34,7 @@ public:
     while(iter != nullptr) {
       temp = iter;
       iter = iter->next;
-      // temp.remove();
+      temp.remove();
     }
   }
 

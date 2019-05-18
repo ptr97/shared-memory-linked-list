@@ -20,8 +20,14 @@ int main(int argc, char const * argv[])
   shmBlock::freeShm();
 
   shmBlock::readFromMemory();
+  // shmBlock::freeShm();
 
-  ListInt listFromMem = ListInt();
+  // int * temp = (int *) shmBlock::lastUsed;
+  // Node n = Node(*temp);
+
+  // shmPtr<ListInt::Node> shmPointer(temp);
+
+  // ListInt listFromMem = ListInt(shmPointer);
 
   return 0;
 }
