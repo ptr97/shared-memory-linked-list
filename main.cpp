@@ -1,33 +1,21 @@
 #include <iostream>
 #include <string>
 #include "SharedMemory.h"
-#include "ListInt.h"
+#include "List.h"
 
 
 int main(int argc, char const * argv[])
 {
-  shmBlock::allocateMemory();
+  shmBlock::allocateMemory("database.db", 4096 * 2);
 
-  std::cout << "Shared memory linked list - UNIX 2nd project" << std::endl;
-  ListInt list = ListInt();
-
+  List<int> list;
   list.add(10);
   list.add(20);
   list.add(30);
   list.add(40);
   list.print();
 
-  shmBlock::freeShm();
-
-  shmBlock::readFromMemory();
-  // shmBlock::freeShm();
-
-  // int * temp = (int *) shmBlock::lastUsed;
-  // Node n = Node(*temp);
-
-  // shmPtr<ListInt::Node> shmPointer(temp);
-
-  // ListInt listFromMem = ListInt(shmPointer);
+  shmBlock::freeShm(4096 * 2);
 
   return 0;
 }
