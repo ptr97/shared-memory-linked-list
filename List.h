@@ -60,6 +60,7 @@ public:
   {
     Node<T> firstNode(item, 0);
     head = firstNode.getSelfAddress();
+    m_size++;
   }
   // ~List() 
   // {
