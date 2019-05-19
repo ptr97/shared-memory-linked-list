@@ -79,6 +79,9 @@ public:
   {
     Node<T> newNode(item, m_size++);
     std::cout << "new node address = " << (void *) newNode.getSelfAddress() << std::endl;
+    std::cout << "node = " << newNode.value << " , " << newNode.selfOffset << " , " << newNode.nextOffset << std::endl;
+    std::cout << newNode.getSelfAddress() << std::endl;
+    std::cout << newNode.getNextAdress() << std::endl;
 
     // if(m_size == 0) {
     //   head = newNode.getSelfAddress();
@@ -98,7 +101,7 @@ public:
     std::cout << "inside print head adress = " << (void *) head << std::endl;
     int counter = 0;
     while(iter != nullptr && counter < 10) {
-      std::cout << counter++ << ": " << iter->value << std::endl;
+      std::cout << counter++ << ": " << iter->value << " , " << iter->selfOffset << " , " << iter->nextOffset << std::endl;
       iter = iter->getNextAdress();
       std::cout << "iter = " << (void *) iter << std::endl;
     }
