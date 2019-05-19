@@ -13,103 +13,91 @@
 
 
 template <typename T>
-class List
-{
+class List {
   template <typename U>
-  struct Node 
-  {
-    Node(const U u, int offset)
-    {
+  struct Node {
+    Node(const U u, int offset) {
       this->value = u;
-      this->selfOffset = offset;
-      this->nextOffset = offset + 1;
-      memcpy(shmBlock::startPtr + selfOffset * sizeof(this), this, sizeof(this));
-    }
-
-    bool isLast()
-    {
-      return this->nextOffset == -1;
-    }
-
-    Node<U> * getSelfAddress()
-    {
-      return (Node<U> *) shmBlock::startPtr + selfOffset * sizeof(this);
-    }
-
-    Node<U> * getNextAdress()
-    {
-      if(! this->isLast()) {
-        return (Node<U> *) shmBlock::startPtr + nextOffset * sizeof(this); 
-      } else {
-        return nullptr;
-      }
+      this->nextOffset = offset;
     }
 
     U value;
     int nextOffset = -1;
-    int selfOffset = -1;
+    bool saved = true;
   };
 
-  struct Meta
-  {
-
+  struct Meta {
+    unsigned int head;
   };
 
 public:
-  List(T item)
-  {
-    Node<T> firstNode(item, 0);
-    head = firstNode.getSelfAddress();
-    m_size++;
-    std::cout << "Tworzenie listy m_size = " << m_size << " firstNode.getSelfAddress() = " << firstNode.getSelfAddress() << std::endl;
-  }
-  // ~List() 
-  // {
-  //   Node<T> * iter = head;
-  //   Node<T> * temp = nullptr;
-
-  //   while(iter != nullptr) {
-  //     temp = iter;
-  //     iter = iter->next;
-  //     delete temp;
-  //   }
-  // }
-
-  void add(T item) 
-  {
-    Node<T> newNode(item, m_size++);
-    std::cout << "new node address = " << (void *) newNode.getSelfAddress() << std::endl;
-    std::cout << "node = " << newNode.value << " , " << newNode.selfOffset << " , " << newNode.nextOffset << std::endl;
-    std::cout << newNode.getSelfAddress() << std::endl;
-    std::cout << newNode.getNextAdress() << std::endl;
-
-    // if(m_size == 0) {
-    //   head = newNode.getSelfAddress();
-    // } else {
-    //   Node<T> * iter = head->getNextAddress();
-    //   while(iter != nullptr) {
-    //     std::cout << iter->value << std::endl;
-    //     iter = iter->getNextAddress();
-    //   }
-    //   iter->next = newNode;
-    // }
+  static List<T> createListInShm(const char * shmName) {
+    shmBlock::allocateMemory(shmName, 4096 * 2);
+    return List(true);
   }
 
-  void print() 
-  {
-    Node<T> * iter = head;
-    std::cout << "inside print head adress = " << (void *) head << std::endl;
-    int counter = 0;
-    while(iter != nullptr && counter < 10) {
-      std::cout << counter++ << ": " << iter->value << " , " << iter->selfOffset << " , " << iter->nextOffset << std::endl;
-      iter = iter->getNextAdress();
-      std::cout << "iter = " << (void *) iter << std::endl;
+  static List<T> readListFromMemory(const char * shmName) {
+    shmBlock::readFromMemory(shmName);
+    return List(false);
+  }
+
+  void add(T item) {
+    int freeOffset = findFreeOffset();
+    
+    std::cout << "freeOffset = " << freeOffset << std::endl;
+    Meta & meta = getMeta();
+    Node<T> & newNode = getNode(freeOffset);
+    newNode.value = item;
+    newNode.nextOffset = meta.head;
+    newNode.saved = true;
+
+    meta.head = freeOffset;
+  }
+
+  void print() {
+    Meta & meta = getMeta();
+    int current = meta.head;
+    while (current != -1) {
+      const Node<T> & currentNode = getNode(current);
+      std::cout << "Current: " << currentNode.value << std::endl;
+      current = currentNode.nextOffset;
     }
   }
 
 private:
-  Node<T> * head = nullptr;
-  unsigned int m_size = 0;
+  List(bool newList) {
+    struct Meta & meta = getMeta();
+
+    if (newList) {
+      meta.head = -1;
+
+      for(int i = 0; i < maxSize; ++i) {
+        getNode(i).saved = false;
+      }
+    }
+  }
+
+  Node<T> & getNode(int offset) {
+    return *reinterpret_cast<Node<T>*>(shmBlock::startPtr + sizeof(Meta) + sizeof(Node<T>) * offset);
+  }
+
+  Meta & getMeta() {
+    return *reinterpret_cast<Meta *>(shmBlock::startPtr);
+  }
+
+  int findFreeOffset() {
+    int next_offset = 0;
+    while (getNode(next_offset).saved != false) {
+      if (next_offset > maxSize) {
+        std::cout << "ERROR: Out of shm memory" << std::endl;
+        exit(-1);
+      }
+      ++next_offset;
+    }
+    return next_offset;
+  }
+
+  int maxSize = 20;
 };
 
 

@@ -6,15 +6,19 @@
 
 int main(int argc, char const * argv[])
 {
-  shmBlock::allocateMemory("database.db", 4096 * 2);
-
-  List<int> list(5);
+  List<int> list = List<int>::createListInShm("database.db");
   list.add(10);
   list.add(20);
   list.add(30);
   list.add(40);
   list.print();
 
+  shmBlock::freeShm(4096 * 2);
+
+  std::cout << "Now we will read linked list from memory" << std::endl;
+
+  List<int> listFromMem = List<int>::readListFromMemory("database.db");
+  listFromMem.print();
   shmBlock::freeShm(4096 * 2);
 
   return 0;
