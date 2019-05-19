@@ -56,6 +56,11 @@ class List
   };
 
 public:
+  List(T item)
+  {
+    Node<T> firstNode(item, 0);
+    head = firstNode.getSelfAddress();
+  }
   // ~List() 
   // {
   //   Node<T> * iter = head;
@@ -86,9 +91,9 @@ public:
 
   void print() 
   {
-    Node<T> * iter = (Node<T> *) shmBlock::startPtr;
+    Node<T> * iter = head;
     int counter = 0;
-    while(iter != nullptr) {
+    while(iter != nullptr && counter < 10) {
       std::cout << counter++ << ": " << iter->value << std::endl;
       iter = iter->getNextAdress();
     }

@@ -8,7 +8,7 @@ int main(int argc, char const * argv[])
 {
   shmBlock::allocateMemory("database.db", 4096 * 2);
 
-  List<int> list;
+  List<int> list(5);
   list.add(10);
   list.add(20);
   list.add(30);
