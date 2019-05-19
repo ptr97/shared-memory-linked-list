@@ -54,6 +54,40 @@ public:
     meta.head = freeOffset;
   }
 
+  bool exists(T item) {
+    Meta & meta = getMeta();
+    int current = meta.head;
+    while (current != -1) {
+      const Node<T> & currentNode = getNode(current);
+      if (currentNode.value == item) {
+        return true;
+      } else {
+        current = currentNode.nextOffset;
+      }
+    }
+    return false;
+  }
+
+  bool remove(T item) {
+    Meta & meta = getMeta();
+    int current = meta.head;
+    int last = meta.head;
+    while (current != -1) {
+      Node<T> & currentNode = getNode(current);
+      if (currentNode.value == item) {
+        std::cout << "removing node with value " << currentNode.value << std::endl;
+        currentNode.saved = false;
+        Node<T> & lastNode = getNode(last);
+        lastNode.nextOffset = currentNode.nextOffset;
+        return true;
+      } else {
+        last = current;
+        current = currentNode.nextOffset;
+      }
+    }
+    return false;
+  }
+
   void print() {
     Meta & meta = getMeta();
     int current = meta.head;

@@ -13,6 +13,11 @@ int main(int argc, char const * argv[])
   list.add(40);
   list.print();
 
+  std::cout << "list.exists(20) == " << list.exists(20) << std::endl;
+  list.remove(20);
+  list.remove(10);
+  list.print();
+
   shmBlock::freeShm(4096 * 2);
 
   std::cout << "Now we will read linked list from memory" << std::endl;
