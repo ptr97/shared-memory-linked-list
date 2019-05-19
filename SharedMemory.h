@@ -37,6 +37,9 @@ public:
       std::cout << "mmap failed" << std::endl;
       exit(-1);
 	  }
+
+    memset(shmBlock::startPtr, '\0', static_cast<off_t>(size));
+    std::cout << "shmBlock::startPtr = " << (void *) shmBlock::startPtr << std::endl;
   }
 
   static void readFromMemory(const char * key)

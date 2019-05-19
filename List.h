@@ -61,6 +61,7 @@ public:
     Node<T> firstNode(item, 0);
     head = firstNode.getSelfAddress();
     m_size++;
+    std::cout << "Tworzenie listy m_size = " << m_size << " firstNode.getSelfAddress() = " << firstNode.getSelfAddress() << std::endl;
   }
   // ~List() 
   // {
@@ -77,6 +78,7 @@ public:
   void add(T item) 
   {
     Node<T> newNode(item, m_size++);
+    std::cout << "new node address = " << (void *) newNode.getSelfAddress() << std::endl;
 
     // if(m_size == 0) {
     //   head = newNode.getSelfAddress();
@@ -93,10 +95,12 @@ public:
   void print() 
   {
     Node<T> * iter = head;
+    std::cout << "inside print head adress = " << (void *) head << std::endl;
     int counter = 0;
     while(iter != nullptr && counter < 10) {
       std::cout << counter++ << ": " << iter->value << std::endl;
       iter = iter->getNextAdress();
+      std::cout << "iter = " << (void *) iter << std::endl;
     }
   }
 
