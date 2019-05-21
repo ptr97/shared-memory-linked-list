@@ -86,8 +86,8 @@ public:
 
     shmBlock::lastUsed = shmBlock::startPtr + sizeof(shmBlock::startPtr);
 
-    std::cout << (void *) shmBlock::startPtr << std::endl;
-    std::cout << (void *) shmBlock::lastUsed << std::endl;
+    std::cout << "new start pointer = " << (void *) shmBlock::startPtr << std::endl;
+    std::cout << "new last used pointer = " << (void *) shmBlock::lastUsed << std::endl;
   }
 
   static void freeShm()
@@ -143,8 +143,9 @@ public:
   T* operator->()
   {
     // return m_data;
-
-    std::cout << m_data + shmBlock::offset << std::endl;
+    
+    std::cout << "m_data = " << m_data << std::endl;
+    std::cout << "m_data + shmBlock::offset = " << m_data + shmBlock::offset << std::endl;
 
     return (m_data + shmBlock::offset);
   }
