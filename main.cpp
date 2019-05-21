@@ -6,28 +6,28 @@
 
 int main(int argc, char const * argv[])
 {
-  shmBlock::allocateMemory();
+  // shmBlock::allocateMemory();
 
-  std::cout << "Shared memory linked list - UNIX 2nd project" << std::endl;
-  ListInt list = ListInt();
+  // std::cout << "Shared memory linked list - UNIX 2nd project" << std::endl;
+  // ListInt list = ListInt();
 
-  list.add(10);
-  list.add(20);
-  list.add(30);
-  list.add(40);
-  list.print();
+  // list.add(10);
+  // list.add(20);
+  // list.add(30);
+  // list.add(40);
+  // list.print();
 
-  shmBlock::freeShm();
-
-  shmBlock::readFromMemory();
   // shmBlock::freeShm();
 
-  // int * temp = (int *) shmBlock::lastUsed;
-  // Node n = Node(*temp);
+  shmBlock::readFromMemory();
 
-  // shmPtr<ListInt::Node> shmPointer(temp);
+  shmPtr<ListInt::Node> * test = reinterpret_cast<shmPtr<ListInt::Node> *>(shmBlock::lastUsed);
+  std::cout << test->m_data << std::endl;
+  std::cout << reinterpret_cast<shmPtr<ListInt::Node> *>(shmBlock::lastUsed) << std::endl;
+  ListInt listFromMem = ListInt(reinterpret_cast<shmPtr<ListInt::Node> *>(shmBlock::lastUsed));
+  listFromMem.print();
 
-  // ListInt listFromMem = ListInt(shmPointer);
+  shmBlock::freeShm();
 
   return 0;
 }

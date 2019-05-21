@@ -16,7 +16,7 @@ class shmBlock
 public:
   static char * startPtr;
   static char * lastUsed;
-  static size_t offset;
+  static int offset;
 
   static void allocateMemory() 
   {
@@ -64,6 +64,11 @@ public:
 	  }
 
     shmBlock::setShmStartPtr();
+
+    for(char * p = shmBlock::startPtr; p < shmBlock::startPtr + 20; p +=4) {
+      std::cout << std::hex << (u_int32_t) *p;
+    }
+    std::cout << std::endl;
   }
 
 
@@ -75,12 +80,9 @@ public:
     std::cout<< "old => " << (void *)  old << std::endl;
     std::cout << "new => " << (void *) shmBlock::startPtr << std::endl;
     
-    offset = shmBlock::startPtr - old;
+    shmBlock::offset = shmBlock::startPtr - old - sizeof(int *);
 
     std::cout << "offset = " << offset << std::endl;
-
-    // ???
-    // shmBlock::startPtr += offset;
 
     shmBlock::lastUsed = shmBlock::startPtr + sizeof(shmBlock::startPtr);
 
@@ -100,9 +102,10 @@ public:
 
 template<typename T>
 class shmPtr {
-  T * m_data = nullptr;
 
 public:
+  T * m_data = nullptr;
+
   shmPtr<T>()
   {
     m_data = nullptr;
@@ -116,7 +119,7 @@ public:
   shmPtr<T>(T * ptr)
   {
     makeNew();
-    memcpy(m_data, ptr, sizeof(T)); // czy aby na pewno??
+    memcpy(m_data, ptr, sizeof(T));
   }
 
   void operator=(std::nullptr_t)
@@ -141,6 +144,8 @@ public:
   {
     // return m_data;
 
+    std::cout << m_data + shmBlock::offset << std::endl;
+
     return (m_data + shmBlock::offset);
   }
 
@@ -154,21 +159,15 @@ public:
     return (m_data + shmBlock::offset) != nullptr;
   }
 
-  void remove()
-  {
-    // char * toDelete = (m_data + shmBlock::offset);
-
-    // delete toDelete;
-  }
-
 private:
   void makeNew()
   {
+    // m_data = (T*) malloc(sizeof(T));
+
+
     m_data = (T*) shmBlock::lastUsed;
     std::cout << "m_data = " << m_data << std::endl;
     shmBlock::lastUsed += sizeof(T);
-
-    // m_data = (T*) malloc(sizeof(T));
   }
   
 };

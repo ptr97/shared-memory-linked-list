@@ -15,39 +15,29 @@ public:
     }
 
     int value;
+    int r = 0xa5a5a5a5;
     shmPtr<Node> next = nullptr;
   };
 
 public:
   ListInt() {}
 
-  ListInt(shmPtr<Node> ptrToShm) 
+  ListInt(shmPtr<Node> * ptrToShm) 
   {
     m_head = ptrToShm;
   }
 
-  ~ListInt() 
-  {
-    shmPtr<Node> iter = m_head;
-    shmPtr<Node> temp = nullptr;
-
-    while(iter != nullptr) {
-      temp = iter;
-      iter = iter->next;
-      temp.remove();
-    }
-  }
-
   void add(int item) 
   {
-    Node * n = new Node(item);
-    shmPtr<Node> newNode(n);
+    // placement new maybe
+    Node n = Node(item);
+    shmPtr<Node> newNode(&n);
     ++m_size;
 
     if(m_head == nullptr) {
-      m_head = newNode;
+      m_head = &newNode;
     } else {
-      shmPtr<Node> iter = m_head;
+      shmPtr<Node> iter = *m_head;
       while(iter->next != nullptr) {
         iter = iter->next;
       }
@@ -57,7 +47,7 @@ public:
 
   void print() 
   {
-    shmPtr<Node> iter = m_head;
+    shmPtr<Node> iter = *m_head;
     int counter = 0;
     while(iter != nullptr) {
       std::cout << counter++ << ": " << iter->value << std::endl;
@@ -66,7 +56,7 @@ public:
   }
 
 private:
-  shmPtr<Node> m_head = nullptr;
+  shmPtr<Node> * m_head = nullptr;
   unsigned int m_size = 0;
 };
 
