@@ -80,7 +80,7 @@ public:
     std::cout<< "old => " << (void *)  old << std::endl;
     std::cout << "new => " << (void *) shmBlock::startPtr << std::endl;
     
-    shmBlock::offset = shmBlock::startPtr - old - sizeof(int *);
+    shmBlock::offset = shmBlock::startPtr - old - sizeof(int *) + 8;
 
     std::cout << "offset = " << offset << std::endl;
 
@@ -143,7 +143,7 @@ public:
   T* operator->()
   {
     // return m_data;
-    
+
     std::cout << "m_data = " << m_data << std::endl;
     std::cout << "m_data + shmBlock::offset = " << m_data + shmBlock::offset << std::endl;
 

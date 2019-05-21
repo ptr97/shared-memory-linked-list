@@ -22,8 +22,8 @@ int main(int argc, char const * argv[])
   shmBlock::readFromMemory();
 
   shmPtr<ListInt::Node> * test = reinterpret_cast<shmPtr<ListInt::Node> *>(shmBlock::lastUsed);
-  std::cout << test->m_data << std::endl;
-  std::cout << reinterpret_cast<shmPtr<ListInt::Node> *>(shmBlock::lastUsed) << std::endl;
+  std::cout << "shmBlock::lastUsed->m_data in main!: " << test->m_data << std::endl;
+  std::cout << "shmBlock::lastUsed in main!: " << reinterpret_cast<shmPtr<ListInt::Node> *>(shmBlock::lastUsed) << std::endl;
   ListInt listFromMem = ListInt(*reinterpret_cast<shmPtr<ListInt::Node> *>(shmBlock::lastUsed));
   listFromMem.print();
 
