@@ -25,11 +25,15 @@ public:
   {
     head = shmPtr<Node>((Node *) new (shmBlock::lastUsed) Node(p));
     shmBlock::lastUsed += sizeof(Node);
+
+    std::cout << "shmBlock::lastUsed in constructor = " << (void *)shmBlock::lastUsed << std::endl;
   }
   void add(int item) 
   {
     shmPtr<Node> newNode = new (shmBlock::lastUsed) Node(item);
     shmBlock::lastUsed += sizeof(Node);
+
+    std::cout << "shmBlock::lastUsed in add = " << (void *)shmBlock::lastUsed << std::endl;
 
     shmPtr<Node> iter = shmPtr<Node>((Node *) head);
     std::cout << "head value = " << (*iter).value << std::endl;
@@ -39,8 +43,8 @@ public:
       std::cout << "loooooop" << std::endl;
       iter = shmPtr<Node>((Node *) (*iter).next);
     }
-    
-    (*iter).next = newNode; // ???
+
+    (*iter).next = newNode; // not working
     std::cout << "head value = " << (*iter).value << std::endl;
   }
 
