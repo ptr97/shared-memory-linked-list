@@ -22,7 +22,7 @@ public:
 public:
   ListInt() {}
 
-  ListInt(shmPtr<Node> * ptrToShm) 
+  ListInt(shmPtr<Node> ptrToShm) 
   {
     m_head = ptrToShm;
   }
@@ -35,9 +35,9 @@ public:
     ++m_size;
 
     if(m_head == nullptr) {
-      m_head = &newNode;
+      m_head = newNode;
     } else {
-      shmPtr<Node> iter = *m_head;
+      shmPtr<Node> iter = m_head;
       while(iter->next != nullptr) {
         iter = iter->next;
       }
@@ -47,7 +47,7 @@ public:
 
   void print() 
   {
-    shmPtr<Node> iter = *m_head;
+    shmPtr<Node> iter = m_head;
     int counter = 0;
     while(iter != nullptr) {
       std::cout << counter++ << ": " << iter->value << std::endl;
@@ -56,7 +56,7 @@ public:
   }
 
 private:
-  shmPtr<Node> * m_head = nullptr;
+  shmPtr<Node> m_head = nullptr;
   unsigned int m_size = 0;
 };
 

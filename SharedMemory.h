@@ -169,7 +169,6 @@ private:
     std::cout << "m_data = " << m_data << std::endl;
     shmBlock::lastUsed += sizeof(T);
   }
-  
 };
 
 #endif
