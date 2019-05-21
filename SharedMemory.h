@@ -16,7 +16,7 @@ class shmBlock
 public:
   static char * startPtr;
   static char * lastUsed;
-  static int offset;
+  static long long offset;
 
   static void allocateMemory() 
   {
@@ -97,78 +97,6 @@ public:
       std::cout << "unmap error" << std::endl;
       exit(-1);
 	  }
-  }
-};
-
-template<typename T>
-class shmPtr {
-
-public:
-  T * m_data = nullptr;
-
-  shmPtr<T>()
-  {
-    m_data = nullptr;
-  }
-
-  shmPtr<T>(std::nullptr_t)
-  {
-    m_data = nullptr;
-  }
-
-  shmPtr<T>(T * ptr)
-  {
-    makeNew();
-    memcpy(m_data, ptr, sizeof(T));
-  }
-
-  void operator=(std::nullptr_t)
-  {
-    m_data = nullptr;
-  }
-
-  const T operator*() const
-  {
-    // return *m_data;
-
-    return *(m_data + shmBlock::offset);
-  }
-
-  T operator*()
-  { 
-    // return *m_data;
-
-    return *(m_data + shmBlock::offset);
-  }
-  T* operator->()
-  {
-    // return m_data;
-
-    std::cout << "m_data = " << m_data << std::endl;
-    std::cout << "m_data + shmBlock::offset = " << m_data + shmBlock::offset << std::endl;
-
-    return (m_data + shmBlock::offset);
-  }
-
-  bool operator==(std::nullptr_t) const
-  {
-    return (m_data + shmBlock::offset) == nullptr;
-  }
-
-  bool operator!=(std::nullptr_t) const
-  {
-    return (m_data + shmBlock::offset) != nullptr;
-  }
-
-private:
-  void makeNew()
-  {
-    // m_data = (T*) malloc(sizeof(T));
-
-
-    m_data = (T*) shmBlock::lastUsed;
-    std::cout << "m_data = " << m_data << std::endl;
-    shmBlock::lastUsed += sizeof(T);
   }
 };
 

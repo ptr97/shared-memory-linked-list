@@ -2,6 +2,7 @@
 #define __LIST_INT_H__
 
 #include "SharedMemory.h"
+#include "shmPtr.h"
 
 
 class ListInt 
@@ -16,48 +17,46 @@ public:
 
     int value;
     int r = 0xa5a5a5a5;
-    shmPtr<Node> next = nullptr;
+    shmPtr<Node> next = shmPtr<Node>((Node *) nullptr);
   };
 
 public:
-  ListInt() {}
-
-  ListInt(shmPtr<Node> ptrToShm) 
+  ListInt(int p) 
   {
-    m_head = ptrToShm;
+    head = shmPtr<Node>((Node *) new (shmBlock::lastUsed) Node(p));
+    shmBlock::lastUsed += sizeof(Node);
   }
-
   void add(int item) 
   {
-    // placement new maybe
-    Node n = Node(item);
-    shmPtr<Node> newNode(&n);
-    ++m_size;
+    shmPtr<Node> newNode = new (shmBlock::lastUsed) Node(item);
+    shmBlock::lastUsed += sizeof(Node);
 
-    if(m_head == nullptr) {
-      m_head = newNode;
-    } else {
-      shmPtr<Node> iter = m_head;
-      while(iter->next != nullptr) {
-        iter = iter->next;
-      }
-      iter->next = newNode;
+    shmPtr<Node> iter = shmPtr<Node>((Node *) head);
+    std::cout << "head value = " << (*iter).value << std::endl;
+    std::cout << "(*iter).next = " << (*iter).next << " iter.value " << (*iter).value <<  std::endl;
+
+    while((*iter).next != nullptr) {
+      std::cout << "loooooop" << std::endl;
+      iter = shmPtr<Node>((Node *) (*iter).next);
     }
+    
+    (*iter).next = newNode; // ???
+    std::cout << "head value = " << (*iter).value << std::endl;
   }
 
   void print() 
   {
-    shmPtr<Node> iter = m_head;
+    shmPtr<Node> iter = shmPtr<Node>((Node *) head);
     int counter = 0;
+    
     while(iter != nullptr) {
-      std::cout << counter++ << ": " << iter->value << std::endl;
-      iter = iter->next;
+      std::cout << counter++ << ": " << (*iter).value << std::endl;
+      iter = shmPtr<Node>((Node *) (*iter).next);
     }
   }
 
 private:
-  shmPtr<Node> m_head = nullptr;
-  unsigned int m_size = 0;
+  shmPtr<Node> head = shmPtr<Node>((Node *) nullptr);
 };
 
 

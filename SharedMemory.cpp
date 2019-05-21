@@ -2,4 +2,4 @@
 
 char * shmBlock::startPtr;
 char * shmBlock::lastUsed;
-int shmBlock::offset;
+long long shmBlock::offset = 0;
