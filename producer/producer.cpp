@@ -4,7 +4,7 @@
 #include "../List.h"
 
 
-int main(int argc, char const * argv[])
+int main()
 {
   const uint shmBlockSize = 4096 * 2;
 
