@@ -31,8 +31,8 @@ class List {
   };
 
 public:
-  static List<T> createListInShm(const char * shmName) {
-    shmBlock::allocateMemory(shmName, 4096 * 2);
+  static List<T> createListInShm(const char * shmName, uint shmBlockSize) {
+    shmBlock::allocateMemory(shmName, shmBlockSize);
     return List(true);
   }
 

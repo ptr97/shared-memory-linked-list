@@ -4,11 +4,13 @@
 #include "../List.h"
 
 
-int main(int argc, char const * argv[])
+int main()
 {
+  const uint shmBlockSize = 4096 * 2;
+  
   List<int> listFromMem = List<int>::readListFromMemory("../database.db");
   listFromMem.print();
-  shmBlock::freeShm(4096 * 2);
+  shmBlock::freeShm(shmBlockSize);
 
   return 0;
 }
