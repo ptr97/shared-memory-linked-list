@@ -133,6 +133,7 @@ private:
 
   void setCapacity(uint shmBlockSize) {
     maxSize = (shmBlockSize - sizeof(Meta)) / sizeof(Node<T>);
+    std::cout << "List capacity: " << maxSize << std::endl;
   }
 
   int maxSize;
