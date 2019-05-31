@@ -1,5 +1,4 @@
 #include <iostream>
-#include <string>
 #include "../SharedMemory.h"
 #include "../List.h"
 
