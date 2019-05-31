@@ -10,6 +10,7 @@
 #include <sys/mman.h>
 #include <unistd.h>
 #include <string.h>
+#include "SharedMemory.h"
 
 
 template <typename T>
@@ -33,15 +34,15 @@ class List {
 public:
   static List<T> createListInShm(const char * shmName, uint shmBlockSize) {
     shmBlock::allocateMemory(shmName, shmBlockSize);
-    return List(true);
+    return List(true, shmBlockSize);
   }
 
   static List<T> readListFromMemory(const char * shmName) {
-    shmBlock::readFromMemory(shmName);
-    return List(false);
+    uint shmSize = shmBlock::readFromMemory(shmName);
+    return List(false, shmSize);
   }
 
-  void add(T item) {
+  void add(T item){
     int freeOffset = findFreeOffset();
     
     std::cout << "freeOffset = " << freeOffset << std::endl;
@@ -99,12 +100,11 @@ public:
   }
 
 private:
-  List(bool newList) {
-    struct Meta & meta = getMeta();
-
+  List(bool newList, uint shmBlockSize) {
+    struct List<T>::Meta & meta = getMeta();
+    setCapacity(shmBlockSize);
     if (newList) {
       meta.head = -1;
-
       for(int i = 0; i < maxSize; ++i) {
         getNode(i).saved = false;
       }
@@ -131,9 +131,11 @@ private:
     return next_offset;
   }
 
-  int maxSize = 20;
+  void setCapacity(uint shmBlockSize) {
+    maxSize = (shmBlockSize - sizeof(Meta)) / sizeof(Node<T>);
+  }
+
+  int maxSize;
 };
-
-
 
 #endif
