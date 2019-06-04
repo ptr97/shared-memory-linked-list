@@ -12,15 +12,27 @@ public:
   }
   
   T& operator->() {
+    // std::cout << " T& operator-> " << std::endl;
     return *reinterpret_cast<T*>(shmBlock::offset + m_ptr_offset);
   }
   
   operator T* () {
+    // std::cout << " operator T* " << std::endl;
     return reinterpret_cast<T*>(shmBlock::offset + m_ptr_offset);
   }
 
-  T operator*() {
+  T& operator*() {
+    // std::cout << " T operator* " << std::endl;
     return *reinterpret_cast<T*>(shmBlock::offset + m_ptr_offset);
+  }
+
+  void set(long long p) {
+    m_ptr_offset = p;
+  }
+
+  bool isNull()
+  {
+    return (reinterpret_cast<T*>(shmBlock::offset + m_ptr_offset) == nullptr);
   }
   
 private:

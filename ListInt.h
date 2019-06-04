@@ -31,6 +31,7 @@ public:
   void add(int item) 
   {
     shmPtr<Node> newNode = new (shmBlock::lastUsed) Node(item);
+    char * temp = shmBlock::lastUsed;
     shmBlock::lastUsed += sizeof(Node);
 
     std::cout << "shmBlock::lastUsed in add = " << (void *)shmBlock::lastUsed << std::endl;
@@ -39,13 +40,19 @@ public:
     std::cout << "head value = " << (*iter).value << std::endl;
     std::cout << "(*iter).next = " << (*iter).next << " iter.value " << (*iter).value <<  std::endl;
 
+    // std::cout << "before while lop ##############" << std::endl;
     while((*iter).next != nullptr) {
-      std::cout << "loooooop" << std::endl;
-      iter = shmPtr<Node>((Node *) (*iter).next);
-    }
+      // std::cout << "*** loooooop ***" << std::endl;
+      std::cout << " in loop (*iter).next = " << (*iter).next << " iter.value " << (*iter).value <<  std::endl;
+      iter = (*iter).next;
 
-    (*iter).next = newNode; // not working
-    std::cout << "head value = " << (*iter).value << std::endl;
+      // iter.set();
+    }
+    std::cout << "after while lop $$$$" << std::endl;
+    // (*iter).next = newNode; // not working
+    
+    (*iter).next.set(shmBlock::lastUsed - temp);
+    std::cout << " after loop (*iter).next = " << (*iter).next << " iter.value " << (*iter).value <<  std::endl;
   }
 
   void print() 
@@ -53,9 +60,10 @@ public:
     shmPtr<Node> iter = shmPtr<Node>((Node *) head);
     int counter = 0;
     
-    while(iter != nullptr) {
+    while(!iter.isNull()) {
+      std::cout << " iter.value " << (*iter).value <<  std::endl;
       std::cout << counter++ << ": " << (*iter).value << std::endl;
-      iter = shmPtr<Node>((Node *) (*iter).next);
+      iter = (*iter).next;
     }
   }
 

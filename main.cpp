@@ -13,9 +13,9 @@ int main(int argc, char const * argv[])
   ListInt list = ListInt(1);
 
   list.add(10);
-  list.add(20);
-  list.add(30);
-  list.add(40);
+  // list.add(20);
+  // list.add(30);
+  // list.add(40);
   list.print();
 
   shmBlock::freeShm();
